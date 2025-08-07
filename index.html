@@ -139,36 +139,44 @@
     function updateText() {
       output.innerText = input.value;
     }
+
     function toggleBold() {
       output.style.fontWeight = output.style.fontWeight === "bold" ? "normal" : "bold";
     }
+
     function toggleItalic() {
       output.style.fontStyle = output.style.fontStyle === "italic" ? "normal" : "italic";
     }
+
     function toggleUppercase() {
       const txt = output.textContent;
       output.textContent = txt && txt === txt.toUpperCase()
         ? txt.toLowerCase()
         : txt.toUpperCase();
     }
+
     function toggleLowercase() {
       const txt = output.textContent;
       output.textContent = txt && txt === txt.toLowerCase()
         ? txt.toUpperCase()
         : txt.toLowerCase();
     }
+
     function capitalizeWords() {
       output.textContent = output.textContent
         .split(' ')
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
         .join(' ');
     }
+
     function deleteText() {
       output.textContent = "";
     }
+
     function changeTextColor() {
       output.style.color = document.getElementById("colortype").value;
     }
+
     function toggleDarkMode() {
       document.body.classList.toggle("night-mode");
       document.body.classList.toggle("light-mode");
