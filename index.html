@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WEB LIST - Text Transformer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WEB LIST - Text Transformer (Live Print)</title>
   <style>
     body {
       margin: 0;
@@ -48,6 +48,7 @@
       padding: 10px;
       font-size: 1.2rem;
       box-sizing: border-box;
+      transition: background-color 0.3s, color 0.3s;
     }
     .button-container {
       display: flex;
@@ -96,8 +97,12 @@
       word-wrap: break-word;
       box-sizing: border-box;
       transition: background 0.3s, color 0.3s;
+      font-weight: normal;
+      font-style: normal;
+      text-transform: none;
+      color: #000;
     }
-    /* Adjustments for night mode */
+
     body.night-mode input#textInput {
       background: #555;
       border-color: #00bcd4;
@@ -117,16 +122,16 @@
 <body class="light-mode">
   <div class="main light-mode">
     <h1>☠️ WEB LIST ☠️</h1>
-    <input type="text" id="textInput" placeholder="Enter text here…">
+    <input type="text" id="textInput" placeholder="Enter text here…" autofocus />
     <div class="button-container">
       <button onclick="updateText()">OK</button>
-      <label><input type="checkbox" onclick="toggleBold()"> <span>Bold</span></label>
-      <label><input type="checkbox" onclick="toggleItalic()"> <span>Italic</span></label>
-      <label><input type="checkbox" onclick="toggleUppercase()"> <span>Uppercase</span></label>
-      <label><input type="checkbox" onclick="toggleLowercase()"> <span>Lowercase</span></label>
-      <label><input type="checkbox" onclick="capitalizeWords()"> <span>Capitalize</span></label>
+      <label><input type="checkbox" id="chkBold" onclick="toggleBold()"> <span>Bold</span></label>
+      <label><input type="checkbox" id="chkItalic" onclick="toggleItalic()"> <span>Italic</span></label>
+      <label><input type="checkbox" id="chkUppercase" onclick="toggleUppercase()"> <span>Uppercase</span></label>
+      <label><input type="checkbox" id="chkLowercase" onclick="toggleLowercase()"> <span>Lowercase</span></label>
+      <label><input type="checkbox" id="chkCapitalize" onclick="capitalizeWords()"> <span>Capitalize</span></label>
       <button onclick="deleteText()">DELETE</button>
-      <input id="colortype" type="color" onchange="changeTextColor()">
+      <input id="colortype" type="color" onchange="changeTextColor()" />
       <button class="dark-toggle" onclick="toggleDarkMode()">☠️</button>
     </div>
     <div id="output"></div>
@@ -135,34 +140,83 @@
   <script>
     const output = document.getElementById("output");
     const input = document.getElementById("textInput");
+    const chkBold = document.getElementById("chkBold");
+    const chkItalic = document.getElementById("chkItalic");
+    const chkUppercase = document.getElementById("chkUppercase");
+    const chkLowercase = document.getElementById("chkLowercase");
+    const chkCapitalize = document.getElementById("chkCapitalize");
+
+
+    input.addEventListener("input", () => {
+      output.textContent = input.value;
+      resetStyles();
+
+    
+      if(chkBold.checked) output.style.fontWeight = "bold";
+      if(chkItalic.checked) output.style.fontStyle = "italic";
+      if(chkUppercase.checked) output.style.textTransform = "uppercase";
+      if(chkLowercase.checked) output.style.textTransform = "lowercase";
+      if(chkCapitalize.checked) capitalizeWords();
+    });
 
     function updateText() {
-      output.innerText = input.value;
+      output.textContent = input.value;
+      resetStyles();
+
+      if(chkBold.checked) output.style.fontWeight = "bold";
+      if(chkItalic.checked) output.style.fontStyle = "italic";
+      if(chkUppercase.checked) output.style.textTransform = "uppercase";
+      if(chkLowercase.checked) output.style.textTransform = "lowercase";
+      if(chkCapitalize.checked) capitalizeWords();
+    }
+
+    function resetStyles() {
+      output.style.fontWeight = "normal";
+      output.style.fontStyle = "normal";
+      output.style.textTransform = "none";
     }
 
     function toggleBold() {
-      output.style.fontWeight = output.style.fontWeight === "bold" ? "normal" : "bold";
+      output.style.fontWeight = chkBold.checked ? "bold" : "normal";
     }
 
     function toggleItalic() {
-      output.style.fontStyle = output.style.fontStyle === "italic" ? "normal" : "italic";
+      output.style.fontStyle = chkItalic.checked ? "italic" : "normal";
     }
 
     function toggleUppercase() {
-      const txt = output.textContent;
-      output.textContent = txt && txt === txt.toUpperCase()
-        ? txt.toLowerCase()
-        : txt.toUpperCase();
+      if (chkUppercase.checked) {
+        chkLowercase.checked = false;
+        chkCapitalize.checked = false;
+        output.style.textTransform = "uppercase";
+      } else {
+        output.style.textTransform = "none";
+      }
     }
 
     function toggleLowercase() {
-      const txt = output.textContent;
-      output.textContent = txt && txt === txt.toLowerCase()
-        ? txt.toUpperCase()
-        : txt.toLowerCase();
+      if (chkLowercase.checked) {
+        chkUppercase.checked = false;
+        chkCapitalize.checked = false;
+        output.style.textTransform = "lowercase";
+      } else {
+        output.style.textTransform = "none";
+      }
     }
 
     function capitalizeWords() {
+      if (!chkCapitalize.checked) {
+      
+        output.style.textTransform = "none";
+        return;
+      }
+     
+      chkUppercase.checked = false;
+      chkLowercase.checked = false;
+
+    
+      output.style.textTransform = "none";
+
       output.textContent = output.textContent
         .split(' ')
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
@@ -171,6 +225,14 @@
 
     function deleteText() {
       output.textContent = "";
+      input.value = "";
+      chkBold.checked = false;
+      chkItalic.checked = false;
+      chkUppercase.checked = false;
+      chkLowercase.checked = false;
+      chkCapitalize.checked = false;
+      output.style.color = "#000";
+      resetStyles();
     }
 
     function changeTextColor() {
